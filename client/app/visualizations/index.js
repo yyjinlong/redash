@@ -14,6 +14,7 @@ import sankeyVisualization from "./sankey";
 import sunburstVisualization from "./sunburst";
 import tableVisualization from "./table";
 import wordCloudVisualization from "./word-cloud";
+import vegaVisualization from "./vega";
 
 const VisualizationConfig = PropTypes.shape({
   type: PropTypes.string.isRequired,
@@ -72,6 +73,7 @@ each(
     sunburstVisualization,
     tableVisualization,
     wordCloudVisualization,
+    vegaVisualization,
   ]),
   registerVisualization
 );
@@ -87,7 +89,9 @@ export function getDefaultVisualization() {
 }
 
 export function newVisualization(type = null, options = {}) {
-  const visualization = type ? registeredVisualizations[type] : getDefaultVisualization();
+  const visualization = type
+    ? registeredVisualizations[type]
+    : getDefaultVisualization();
   return {
     type: visualization.type,
     name: visualization.name,

@@ -1,17 +1,17 @@
-import React from 'react';
-import { Form, Select, Icon } from 'antd';
-import { debounce } from 'lodash';
+import React from "react";
+import { Form, Select, Icon } from "antd";
+import { debounce } from "lodash";
 // import stringify from 'json-stringify-pretty-compact';
 // import * as YAML from 'js-yaml';
-import AceEditor from 'react-ace';
-import { UndoManager, EditSession } from 'brace';
+import AceEditor from "react-ace";
+import { UndoManager, EditSession } from "brace";
 
 // Initialize editor configuration (language support, etc.)
-import { langTools } from '@/components/editor';
+import { langTools } from "@/components/editor";
 
-import { EditorPropTypes } from '../index';
-import { Mode, THEMES, THEME_NAMES, DEFAULT_OPTIONS } from './consts';
-import { renderInitialSpecText } from './helpers';
+import { EditorPropTypes } from "../index";
+import { Mode, THEMES, THEME_NAMES, DEFAULT_OPTIONS } from "./consts";
+import { renderInitialSpecText } from "./helpers";
 
 // Monaco diagnostics option
 //
@@ -118,7 +118,7 @@ export default class VegaEditor extends React.Component {
         origLang,
         origMode,
       },
-      this.props,
+      this.props
     );
     if (!model) {
       model = createModel(specText, lang, uri);
@@ -184,11 +184,7 @@ export default class VegaEditor extends React.Component {
   editorDidMount(editor) {
     this.editor = editor;
     this.updateEditorBuffer();
-    langTools.setCompleters([
-      langTools.snippetCompleter,
-      langTools.keyWordCompleter,
-      langTools.textCompleter,
-    ]);
+    langTools.setCompleters([langTools.snippetCompleter, langTools.keyWordCompleter, langTools.textCompleter]);
   }
 
   render() {
@@ -199,20 +195,19 @@ export default class VegaEditor extends React.Component {
     return (
       <div className="vega-spec-editor">
         <Form.Item>
-          <Select style={{ width: '6.5em' }} value={lang} onChange={target => this.updateLang(target)}>
+          <Select style={{ width: "6.5em" }} value={lang} onChange={target => this.updateLang(target)}>
             <Select.Option key="yaml"> YAML </Select.Option>
             <Select.Option key="json"> JSON </Select.Option>
           </Select>
-          <Select style={{ width: '8em' }} value={mode} onChange={target => this.updateMode(target)}>
+          <Select style={{ width: "8em" }} value={mode} onChange={target => this.updateMode(target)}>
             <Select.Option key={Mode.Vega}> Vega </Select.Option>
             <Select.Option key={Mode.VegaLite}> Vega Lite </Select.Option>
           </Select>
           <Select
-            style={{ width: '12.5em' }}
+            style={{ width: "12.5em" }}
             defaultValue="custom"
             value={theme}
-            onChange={target => this.updateTheme(target)}
-          >
+            onChange={target => this.updateTheme(target)}>
             {THEMES.map(value => (
               <Select.Option key={value}> {THEME_NAMES[value]} </Select.Option>
             ))}
@@ -221,8 +216,7 @@ export default class VegaEditor extends React.Component {
             className="vega-help-link"
             href="https://vega.github.io/vega-lite/"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             <Icon type="question-circle" /> What is Vega?
           </a>
         </Form.Item>

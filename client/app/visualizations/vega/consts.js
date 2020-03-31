@@ -2,18 +2,18 @@
 // const vegaLiteSchema = require('vega-lite/build/vega-lite-schema.json');
 
 export const Mode = {
-  Vega: 'vega',
-  VegaLite: 'vega-lite',
+  Vega: "vega",
+  VegaLite: "vega-lite",
 };
 
 export const NAME_TO_MODE = {
   vega: Mode.Vega,
-  'vega-lite': Mode.VegaLite,
+  "vega-lite": Mode.VegaLite,
 };
 
 export const NAMES = {
-  [Mode.Vega]: 'Vega',
-  [Mode.VegaLite]: 'Vega-Lite',
+  [Mode.Vega]: "Vega",
+  [Mode.VegaLite]: "Vega-Lite",
 };
 
 // export const SCHEMAS = {
@@ -68,43 +68,43 @@ export const VEGA_LITE_START_SPEC = `{
 
 export const DEFAULT_SPECS = {
   [Mode.Vega]: {
-    $schema: 'https://vega.github.io/schema/vega/v5.json',
+    $schema: "https://vega.github.io/schema/vega/v5.json",
   },
   [Mode.VegaLite]: {
-    $schema: 'https://vega.github.io/schema/vega-lite/v3.json',
+    $schema: "https://vega.github.io/schema/vega-lite/v3.json",
   },
 };
 
 // themes in use
 export const THEMES = [
-  'custom',
-  'bold',
-  'pastel',
-  'prism',
-  'excel',
-  'ggplot2',
-  'quartz',
-  'vox',
-  'fivethirtyeight',
-  'latimes',
+  "custom",
+  "bold",
+  "pastel",
+  "prism",
+  "excel",
+  "ggplot2",
+  "quartz",
+  "vox",
+  "fivethirtyeight",
+  "latimes",
 ];
 export const THEME_NAMES = {
-  custom: 'Custom Theme',
-  bold: 'Carto Bold',
-  pastel: 'Carto Pastel',
-  prism: 'Carto Prism',
-  dark: 'Dark',
-  excel: 'Microsoft Excel',
-  ggplot2: 'ggplot2',
-  quartz: 'Quartz',
-  vox: 'Vox',
-  fivethirtyeight: '538',
-  latimes: 'Los Angeles Times',
+  custom: "Custom Theme",
+  bold: "Carto Bold",
+  pastel: "Carto Pastel",
+  prism: "Carto Prism",
+  dark: "Dark",
+  excel: "Microsoft Excel",
+  ggplot2: "ggplot2",
+  quartz: "Quartz",
+  vox: "Vox",
+  fivethirtyeight: "538",
+  latimes: "Los Angeles Times",
 };
 
 export const DEFAULT_OPTIONS = {
-  lang: 'yaml',
+  lang: "yaml",
   mode: Mode.VegaLite,
-  spec: '',
-  theme: 'custom',
+  spec: "",
+  theme: "custom",
 };

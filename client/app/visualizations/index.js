@@ -89,9 +89,7 @@ export function getDefaultVisualization() {
 }
 
 export function newVisualization(type = null, options = {}) {
-  const visualization = type
-    ? registeredVisualizations[type]
-    : getDefaultVisualization();
+  const visualization = type ? registeredVisualizations[type] : getDefaultVisualization();
   return {
     type: visualization.type,
     name: visualization.name,

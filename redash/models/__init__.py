@@ -493,6 +493,9 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
         "tags", MutableList.as_mutable(postgresql.ARRAY(db.Unicode)), nullable=True
     )
 
+    # NOTE(jinlong): 添加group外键
+    group_id = Column(db.Integer, db.ForeignKey('groups.id'))
+
     query_class = SearchBaseQuery
     __tablename__ = "queries"
     __mapper_args__ = {"version_id_col": version, "version_id_generator": False}
@@ -536,30 +539,7 @@ class Query(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model):
     def all_queries(
         cls, group_ids, user_id=None, include_drafts=False, include_archived=False
     ):
-        query_ids = (
-            db.session.query(distinct(cls.id))
-            .join(
-                DataSourceGroup, Query.data_source_id == DataSourceGroup.data_source_id
-            )
-            .filter(Query.is_archived.is_(include_archived))
-            .filter(DataSourceGroup.group_id.in_(group_ids))
-        )
-        queries = (
-            cls.query.options(
-                joinedload(Query.user),
-                joinedload(Query.latest_query_data).load_only(
-                    "runtime", "retrieved_at"
-                ),
-            )
-            .filter(cls.id.in_(query_ids))
-            # Adding outer joins to be able to order by relationship
-            .outerjoin(User, User.id == Query.user_id)
-            .outerjoin(QueryResult, QueryResult.id == Query.latest_query_data_id)
-            .options(
-                contains_eager(Query.user), contains_eager(Query.latest_query_data)
-            )
-        )
-
+        queries = Query.query.filter(Query.group_id.in_(group_ids))
         if not include_drafts:
             queries = queries.filter(
                 or_(Query.is_draft.is_(False), Query.user_id == user_id)
@@ -1074,6 +1054,9 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
         "tags", MutableList.as_mutable(postgresql.ARRAY(db.Unicode)), nullable=True
     )
 
+    # NOTE(jinlong): 添加group外键
+    group_id = Column(db.Integer, db.ForeignKey('groups.id'))
+
     __tablename__ = "dashboards"
     __mapper_args__ = {"version_id_col": version}
 
@@ -1082,31 +1065,7 @@ class Dashboard(ChangeTrackingMixin, TimestampMixin, BelongsToOrgMixin, db.Model
 
     @classmethod
     def all(cls, org, group_ids, user_id):
-        query = (
-            Dashboard.query.options(
-                subqueryload(Dashboard.user).load_only("_profile_image_url", "name")
-            )
-            .outerjoin(Widget)
-            .outerjoin(Visualization)
-            .outerjoin(Query)
-            .outerjoin(
-                DataSourceGroup, Query.data_source_id == DataSourceGroup.data_source_id
-            )
-            .filter(
-                Dashboard.is_archived == False,
-                (
-                    DataSourceGroup.group_id.in_(group_ids)
-                    | (Dashboard.user_id == user_id)
-                ),
-                Dashboard.org == org,
-            )
-            .distinct()
-        )
-
-        query = query.filter(
-            or_(Dashboard.user_id == user_id, Dashboard.is_draft == False)
-        )
-
+        query = Dashboard.query.filter(Dashboard.group_id.in_(group_ids))
         return query
 
     @classmethod

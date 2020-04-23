@@ -1,3 +1,5 @@
+import logging
+
 from flask import request, url_for
 from funcy import project, partial
 
@@ -20,6 +22,7 @@ from redash.security import csp_allows_embeding
 from redash.serializers import serialize_dashboard
 from sqlalchemy.orm.exc import StaleDataError
 
+logger = logging.getLogger(__name__)
 
 # Ordering map for relationships
 order_map = {
@@ -98,8 +101,15 @@ class DashboardListResource(BaseResource):
         Responds with a :ref:`dashboard <dashboard-response-label>`.
         """
         dashboard_properties = request.get_json(force=True)
+        logger.info('** receive dashboard create param: %s' % dashboard_properties)
+        dash_name = dashboard_properties.get('dashName')
+        dash_group = dashboard_properties.get('dashGroup')
+        group_ref = models.Group.query\
+                .filter(models.Group.name == dash_group)\
+                .first()
         dashboard = models.Dashboard(
-            name=dashboard_properties["name"],
+            name=dash_name,
+            group_id=group_ref.id,
             org=self.current_org,
             user=self.current_user,
             is_draft=True,

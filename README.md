@@ -25,6 +25,29 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
 * [Setting up Redash instance](https://redash.io/help/open-source/setup) (includes links to ready made AWS/GCE images).
 * [Documentation](https://redash.io/help/).
 
+## Modify Point(jinlong)
+
+* dashboard与group进行关联
+
+    dashboard表添加group_id:
+    alter table dashboards add column group_id int references groups(id);
+
+    queries表添加group_id:
+    alter table queries add column group_id int references groups(id);
+
+    dashboard根据分组进行展示.
+    queries根据分组进行展示.
+
+
+## Bootstrap
+
+    后端使用8000端口:
+    python manage.py runserver --host=0.0.0.0 --port=8000 --debugger --reload
+
+    前端启动(已配置8080端口):
+    cnpm start
+
+
 ## Supported Data Sources
 
 Redash supports more than 35 [data sources](https://redash.io/help/data-sources/supported-data-sources). 

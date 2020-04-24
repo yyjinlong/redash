@@ -1,11 +1,14 @@
 import { isEmpty, find, map, extend, includes } from "lodash";
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { axios } from "@/services/axios";
 import PropTypes from "prop-types";
 import cx from "classnames";
 import { useDebouncedCallback } from "use-debounce";
 import useMedia from "use-media";
 import Button from "antd/lib/button";
 import Select from "antd/lib/select";
+import Modal from "antd/lib/modal";
+import notification from "antd/lib/notification"
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import Resizable from "@/components/Resizable";
 import Parameters from "@/components/Parameters";
@@ -41,6 +44,7 @@ import useFormatQuery from "./hooks/useFormatQuery";
 import useUpdateQuery from "./hooks/useUpdateQuery";
 import useUpdateQueryDescription from "./hooks/useUpdateQueryDescription";
 import useUnsavedChangesAlert from "./hooks/useUnsavedChangesAlert";
+import navigateTo from "@/components/ApplicationArea/navigateTo";
 
 import "./QuerySource.less";
 
@@ -166,10 +170,67 @@ function QuerySource(props) {
 
   const [isQuerySaving, setIsQuerySaving] = useState(false);
 
+  // 是否显示分组提示框state hook
+  const [visible, setVisible] = useState(false)
+  const closeGroupModal = () => {
+    setIsQuerySaving(false)
+    setVisible(false)
+  }
+  const confirmGroupModal = () => {
+    //console.log(query)
+    setIsQuerySaving(true);
+    let postData = {
+      'schedule': query.schedule,
+      'query': query.query,
+      'name': query.name,
+      'group': curGroup,
+      'data_source_id': query.data_source_id,
+      'options': query.options,
+      'latest_query_data_id': query.latest_query_data_id,
+      'tags': query.tags,
+    }
+    //console.log(postData)
+    axios.post('api/queries', postData).then((res) => {
+      //console.log(res)
+      setVisible(false)
+      notification['success']({
+        message: `创建${query.name}成功`,
+        description: `${query.name}创建成功, 接下来会自动跳转到Queries界面!`,
+        placement: 'topRight',
+      })
+      setTimeout(() => {
+          navigateTo('queries')
+      }, 800)
+    }, (res) => {
+      console.log('保存query失败: ' + res)
+    })
+    // NOTE(jinlong): 原有保存的方法
+    //saveQuery().finally(() => setIsQuerySaving(false));
+  }
+
+  // 设置分组显示列表
+  const [groupList, setGroupList] = useState(function getInitialState() {
+    let gList = []
+    axios.get('api/groups').then((res) => {
+      for (let item of res) {
+        gList.push(item.name)
+      }
+      return gList
+    }, (res) => {
+      console.log('获取组失败!')
+      return gList
+    })
+    return gList
+  })
+
+  const [curGroup, setCurGroup] = useState('')
+  const groupSelect = useCallback(group => {
+    setCurGroup(group)
+  }, [])
+
   const doSaveQuery = useCallback(() => {
     if (!isQuerySaving) {
-      setIsQuerySaving(true);
-      saveQuery().finally(() => setIsQuerySaving(false));
+      setVisible(true)
     }
   }, [isQuerySaving, saveQuery]);
 
@@ -314,6 +375,25 @@ function QuerySource(props) {
                       }
                     />
                   </section>
+                  <Modal title="query关联group" visible={visible} onCancel={closeGroupModal} onOk={confirmGroupModal} >
+                    <span>请选择对应的分组: </span>
+                    <Select
+                      showSearch
+                      style={{ width: '100%' }}
+                      placeholder="请选择对应的分组"
+                      onSelect={groupSelect}
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                      }
+                    >
+                      {
+                        groupList.map(function(name, index) {
+                          return <Select.Option key={index} value={name}>{name}</Select.Option>
+                        })
+                      }
+                    </Select>
+                  </Modal>
                 </div>
               </Resizable>
 

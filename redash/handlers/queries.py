@@ -1,4 +1,6 @@
+import logging
 import sqlparse
+
 from flask import jsonify, request, url_for
 from flask_login import login_required
 from flask_restful import abort
@@ -29,6 +31,8 @@ from redash.permissions import (
 from redash.utils import collect_parameters_from_request
 from redash.serializers import QuerySerializer
 from redash.models.parameterized_query import ParameterizedQuery
+
+LOG = logging.getLogger(__name__)
 
 
 # Ordering map for relationships
@@ -234,6 +238,12 @@ class QueryListResource(BaseQueryListResource):
         :>json number runtime: Runtime of last query execution, in seconds (may be null)
         """
         query_def = request.get_json(force=True)
+        LOG.info('** receive queries create param: %s' % query_def)
+        group = query_def.pop('group')
+        group_ref = models.Group.query\
+                .filter(models.Group.name == group)\
+                .first()
+
         data_source = models.DataSource.get_by_id_and_org(
             query_def.pop("data_source_id"), self.current_org
         )
@@ -255,6 +265,8 @@ class QueryListResource(BaseQueryListResource):
         query_def["data_source"] = data_source
         query_def["org"] = self.current_org
         query_def["is_draft"] = True
+        query_def["group_id"] = group_ref.id
+        LOG.info('** handle queries query ref data: %s' % query_def)
         query = models.Query.create(**query_def)
         models.db.session.add(query)
         models.db.session.commit()

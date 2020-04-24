@@ -22,7 +22,7 @@ from redash.security import csp_allows_embeding
 from redash.serializers import serialize_dashboard
 from sqlalchemy.orm.exc import StaleDataError
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 # Ordering map for relationships
 order_map = {
@@ -101,7 +101,7 @@ class DashboardListResource(BaseResource):
         Responds with a :ref:`dashboard <dashboard-response-label>`.
         """
         dashboard_properties = request.get_json(force=True)
-        logger.info('** receive dashboard create param: %s' % dashboard_properties)
+        LOG.info('** receive dashboard create param: %s' % dashboard_properties)
         dash_name = dashboard_properties.get('dashName')
         dash_group = dashboard_properties.get('dashGroup')
         group_ref = models.Group.query\

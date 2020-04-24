@@ -17,7 +17,7 @@ function CreateDashboardDialog({ dialog }) {
       super(props)
       this.state = {
         visible: true,
-        data: [],
+        groupList: [],
         dashName: '',
         dashGroup: ''
       }
@@ -29,7 +29,7 @@ function CreateDashboardDialog({ dialog }) {
         for (let item of res) {
           groupList.push(item.name)
         }
-        this.setState({data: groupList})
+        this.setState({groupList: groupList})
       }, (res) => {
         console.log('获取组失败!')
       })
@@ -74,7 +74,7 @@ function CreateDashboardDialog({ dialog }) {
     };
 
     render() {
-      let groupList = this.state.data
+      let groupList = this.state.groupList
       return (
         <div>
           <Modal

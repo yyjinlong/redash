@@ -27,16 +27,20 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
 
 ## Modify Point(jinlong)
 
-* dashboard与group进行关联
+## 需求
+
+* dashboard根据分组进行展示及添加.
+* queries根据分组进行展示及添加.
+* dashboard分享链接, 不是所在组不能查看.
+
+
+## dashboard与group进行关联
 
     dashboard表添加group_id:
     alter table dashboards add column group_id int references groups(id);
 
     queries表添加group_id:
     alter table queries add column group_id int references groups(id);
-
-    dashboard根据分组进行展示.
-    queries根据分组进行展示.
 
 
 ## Bootstrap

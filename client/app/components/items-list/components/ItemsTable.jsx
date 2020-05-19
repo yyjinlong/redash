@@ -56,6 +56,14 @@ export const Columns = {
       overrides
     );
   },
+  text(overrides) {
+    return extend(
+      {
+        render: text => text,
+      },
+      overrides
+    );
+  },
   duration(overrides) {
     return extend(
       {
@@ -89,6 +97,7 @@ Columns.dateTime.sortable = sortable;
 Columns.duration.sortable = sortable;
 Columns.timeAgo.sortable = sortable;
 Columns.custom.sortable = sortable;
+Columns.text.sortable = sortable;
 
 export default class ItemsTable extends React.Component {
   static propTypes = {

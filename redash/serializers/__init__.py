@@ -264,6 +264,10 @@ def serialize_dashboard(obj, with_widgets=False, user=None, with_favorite_state=
     else:
         widgets = None
 
+    # NOTE(jinlong): dashboard展示列表添加分组名(group_name)和创建人(creator)
+    group_id = obj.group_id
+    group_obj = models.Group.query.get(group_id)
+
     d = {
         "id": obj.id,
         "slug": obj.slug,
@@ -281,6 +285,8 @@ def serialize_dashboard(obj, with_widgets=False, user=None, with_favorite_state=
         "updated_at": obj.updated_at,
         "created_at": obj.created_at,
         "version": obj.version,
+        "group_name": group_obj.name,
+        "creator": obj.user.to_dict().get("name"),
     }
 
     if with_favorite_state:

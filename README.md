@@ -68,8 +68,8 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
 
 ## Bootstrap
 
-    后端使用8000端口:
-    python manage.py runserver --host=0.0.0.0 --port=8000 --debugger --reload
+    后端使用5000端口:
+    python manage.py runserver --host=0.0.0.0 --port=5000 --debugger --reload
 
     前端启动(已配置8080端口):
     cnpm start

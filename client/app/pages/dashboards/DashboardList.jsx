@@ -61,7 +61,21 @@ class DashboardList extends React.Component {
         width: null,
       }
     ),
-    Columns.avatar({ field: "user", className: "p-l-0 p-r-0" }, name => `Created by ${name}`),
+
+    // NOTE(jinlong): 添加列
+    Columns.text.sortable({
+      title: "所在组",
+      field: "group_name",
+      className: "text-nowrap",
+      width: "3%",
+    }),
+    Columns.text.sortable({
+      title: "创建者",
+      field: "creator",
+      className: "text-nowrap",
+      width: "2%",
+    }),
+
     Columns.dateTime.sortable({
       title: "Created At",
       field: "created_at",

@@ -71,6 +71,12 @@ class PublicDashboardPage extends React.Component {
       .catch(error => this.props.onError(error));
   }
 
+  // NOTE(jinlong): 点击dashbaord分享按钮, 生成分享链接时, 重定向到/dashboard/
+  componentWillMount() {
+    let toUrl = "/dashboard/" + this.props.apiKey;
+    window.location.href=toUrl;
+  }
+
   render() {
     const { loading, dashboard } = this.state;
     return (

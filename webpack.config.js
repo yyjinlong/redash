@@ -14,7 +14,7 @@ const path = require("path");
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const redashBackend = process.env.REDASH_BACKEND || "http://localhost:8000";
+const redashBackend = process.env.REDASH_BACKEND || "http://localhost:5000";
 
 const basePath = path.join(__dirname, "client");
 const appPath = path.join(__dirname, "client", "app");

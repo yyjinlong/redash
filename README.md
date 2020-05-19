@@ -42,6 +42,29 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
     queries表添加group_id:
     alter table queries add column group_id int references groups(id);
 
+    users表对username添加唯一键:
+    alter table users add constraint user_name unique(name);
+
+
+## 分享链接权限问题
+
+    1) 第一种方式, 通过分享按钮, 生成链接
+
+        # 打开dashbaord, 点击分享按钮, 生成Secret address, 复制链接分享时,
+        # 地址如下: http://red.rong360.com/public/dashboards/yq5tiNeo6xB03MBx9xKoU289ZneSe5Sovc5fVodX?org_slug=default
+        # 这时的dashboard是通过key来访问, 所以后端获取dashboard得需要通过key的方式获取.
+        # 同时前端在will mount时重定向到/dashboard/
+        redash/handlers/dashboards.py
+        client/app/pages/dashboards/PublicDashboardPage.jsx
+
+    2) 第二种方式, 直接将dashboard地址发出去
+
+        # 直接分享dashboard地址时, 若当前dashboard组不在该用户所在组, 则没有权限并显示带锁的界面
+        # 后端判断当前dashboard是否在该用户的所在组
+        # 前端根据后端返回来的err_infos来判断对应的锁信息
+        redash/serializers/__init__.py
+        client/app/components/dashboards/dashboard-widget/RestrictedWidget.jsx
+
 
 ## Bootstrap
 

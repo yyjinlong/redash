@@ -156,9 +156,16 @@ class DashboardResource(BaseResource):
         :>json string widget.created_at: ISO format timestamp for widget creation
         :>json string widget.updated_at: ISO format timestamp for last widget modification
         """
-        dashboard = get_object_or_404(
-            models.Dashboard.get_by_slug_and_org, dashboard_slug, self.current_org
-        )
+        try:
+            dashboard = get_object_or_404(
+                models.Dashboard.get_by_slug_and_org, dashboard_slug, self.current_org
+            )
+        except:
+            # NOTE(jinlong): 点击分享按钮生成固定分享链接时, 前端通过key重定向dashbaord,
+            #                所以得到dashboard_slug参数是个key
+            api_key = get_object_or_404(models.ApiKey.get_by_api_key, dashboard_slug)
+            dashboard = api_key.object
+
         response = serialize_dashboard(
             dashboard, with_widgets=True, user=self.current_user
         )

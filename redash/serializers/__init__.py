@@ -226,6 +226,27 @@ def serialize_dashboard(obj, with_widgets=False, user=None, with_favorite_state=
                 widgets.append(serialize_widget(w))
             elif user and has_access(w.visualization.query_rel, user, view_only):
                 widgets.append(serialize_widget(w))
+                # NOTE(jinlong): 判断当前分享的dashboard的组是否在当前访问用户所在的组里.
+                user_groups = user.group_ids
+                dash_group = obj.group_id
+                if dash_group not in user_groups:
+                    widget = project(
+                        serialize_widget(w),
+                        (
+                            "id",
+                            "width",
+                            "dashboard_id",
+                            "options",
+                            "created_at",
+                            "updated_at",
+                        ),
+                    )
+                    widget["restricted"] = True
+                    widget["err_infos"] = "没有dashboard所在组权限, 无法查看!"
+                    widgets.append(widget)
+                else:
+                    widgets.append(serialize_widget(w))
+
             else:
                 widget = project(
                     serialize_widget(w),

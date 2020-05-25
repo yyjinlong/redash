@@ -189,13 +189,18 @@ function QuerySource(props) {
       'latest_query_data_id': query.latest_query_data_id,
       'tags': query.tags,
     }
+    const info = 'id' in query ? '编辑': '创建'
+    if ('id' in query) {
+      postData['query_id'] = query.id
+    }
+
     //console.log(postData)
     axios.post('api/queries', postData).then((res) => {
       //console.log(res)
       setVisible(false)
       notification['success']({
-        message: `创建${query.name}成功`,
-        description: `${query.name}创建成功, 接下来会自动跳转到Queries界面!`,
+        message: `${info}${query.name}成功`,
+        description: `${query.name}${info}成功, 接下来会自动跳转到Queries界面!`,
         placement: 'topRight',
       })
       setTimeout(() => {

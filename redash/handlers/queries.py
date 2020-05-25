@@ -244,6 +244,13 @@ class QueryListResource(BaseQueryListResource):
                 .filter(models.Group.name == group)\
                 .first()
 
+        query_obj = None
+        query_id = query_def.pop('query_id', None)
+        if query_id:
+            query_obj = get_object_or_404(
+                models.Query.get_by_id_and_org, query_id, self.current_org
+            )
+
         data_source = models.DataSource.get_by_id_and_org(
             query_def.pop("data_source_id"), self.current_org
         )
@@ -260,20 +267,41 @@ class QueryListResource(BaseQueryListResource):
         ]:
             query_def.pop(field, None)
 
-        query_def["query_text"] = query_def.pop("query")
-        query_def["user"] = self.current_user
-        query_def["data_source"] = data_source
-        query_def["org"] = self.current_org
-        query_def["is_draft"] = True
-        query_def["group_id"] = group_ref.id
-        LOG.info('** handle queries query ref data: %s' % query_def)
-        query = models.Query.create(**query_def)
-        models.db.session.add(query)
-        models.db.session.commit()
+        if query_obj:
+            for field in ["user", "org"]:
+                query_def.pop(field, None)
+            if "query" in query_def:
+                query_def["query_text"] = query_def.pop("query")
 
-        self.record_event(
-            {"action": "create", "object_id": query.id, "object_type": "query"}
-        )
+            if "tags" in query_def:
+                query_def["tags"] = [tag for tag in query_def["tags"] if tag]
+            query_def["last_modified_by"] = self.current_user
+            query_def["changed_by"] = self.current_user
+            if "version" in query_def and query_def["version"] != query_obj.version:
+                abort(409)
+
+            try:
+                self.update_model(query_obj, query_def)
+                models.db.session.commit()
+            except StaleDataError:
+                abort(409)
+            query = query_obj
+
+        else:
+            query_def["query_text"] = query_def.pop("query")
+            query_def["user"] = self.current_user
+            query_def["data_source"] = data_source
+            query_def["org"] = self.current_org
+            query_def["is_draft"] = True
+            query_def["group_id"] = group_ref.id
+            LOG.info('** handle queries query ref data: %s' % query_def)
+            query = models.Query.create(**query_def)
+            models.db.session.add(query)
+            models.db.session.commit()
+
+            self.record_event(
+                {"action": "create", "object_id": query.id, "object_type": "query"}
+            )
 
         return QuerySerializer(query, with_visualizations=True).serialize()
 

@@ -231,6 +231,7 @@ function QuerySource(props) {
   const doSaveQuery = useCallback(() => {
     if (!isQuerySaving) {
       setVisible(true)
+      setCurGroup(query.group_name)
     }
   }, [isQuerySaving, saveQuery]);
 
@@ -383,6 +384,7 @@ function QuerySource(props) {
                       placeholder="请选择对应的分组"
                       onSelect={groupSelect}
                       optionFilterProp="children"
+                      defaultValue={query.group_name}
                       filterOption={(input, option) =>
                         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                       }

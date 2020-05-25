@@ -46,6 +46,24 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
     alter table users add constraint user_name unique(name);
 
 
+## dashboard与group关联
+
+    保存dashboard时, 选择对应的组:
+    client/app/components/dashboards/CreateDashboardDialog.jsx
+
+    后端获取组, 进行保存:
+    redash/handlers/dashboards.py
+
+    dashboard、query显示, 根据组进行筛选:
+    redash/models/__init__.py
+
+
+## query与group关联
+
+    query保存时, 选择添加组:
+    client/app/pages/queries/QuerySource.jsx
+
+
 ## 分享链接权限问题
 
     1) 第一种方式, 通过分享按钮, 生成链接

@@ -126,7 +126,13 @@ def serialize_query(
         "version": query.version,
         "tags": query.tags or [],
         "is_safe": query.parameterized.is_safe,
+        "group_name": "",
     }
+
+    # NOTE(jinlong): query查询列表时添加group_name
+    if query.group_id:
+        group_obj = models.Group.query.get(query.group_id)
+        d['group_name'] = group_obj.name
 
     if with_user:
         d["user"] = query.user.to_dict()
@@ -264,10 +270,6 @@ def serialize_dashboard(obj, with_widgets=False, user=None, with_favorite_state=
     else:
         widgets = None
 
-    # NOTE(jinlong): dashboard展示列表添加分组名(group_name)和创建人(creator)
-    group_id = obj.group_id
-    group_obj = models.Group.query.get(group_id)
-
     d = {
         "id": obj.id,
         "slug": obj.slug,
@@ -285,9 +287,15 @@ def serialize_dashboard(obj, with_widgets=False, user=None, with_favorite_state=
         "updated_at": obj.updated_at,
         "created_at": obj.created_at,
         "version": obj.version,
-        "group_name": group_obj.name,
+        "group_name": "",
         "creator": obj.user.to_dict().get("name"),
     }
+
+    # NOTE(jinlong): dashboard展示列表时添加group_name和crator
+    group_id = obj.group_id
+    if group_id:
+        group_obj = models.Group.query.get(group_id)
+        d['group_name'] = group_obj.name
 
     if with_favorite_state:
         d["is_favorite"] = models.Favorite.is_favorite(current_user.id, obj)

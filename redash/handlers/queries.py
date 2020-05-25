@@ -282,6 +282,7 @@ class QueryListResource(BaseQueryListResource):
 
             try:
                 self.update_model(query_obj, query_def)
+                query_obj.group_id = group_ref.id
                 models.db.session.commit()
             except StaleDataError:
                 abort(409)

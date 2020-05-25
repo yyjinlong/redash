@@ -62,6 +62,7 @@ Today **_Redash_** has support for querying multiple databases, including: Redsh
 
     query保存时, 选择添加组:
     client/app/pages/queries/QuerySource.jsx
+    redash/handlers/queries.py
 
 
 ## 分享链接权限问题
